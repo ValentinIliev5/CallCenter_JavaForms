@@ -1,1 +1,1 @@
-The project uses local h2 database.
+- The project uses local h2 database.

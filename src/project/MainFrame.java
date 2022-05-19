@@ -6,15 +6,18 @@ import javax.swing.JTabbedPane;
 
 public class MainFrame extends JFrame{
 
-	EmployeePanel employeePanel = new EmployeePanel();
-	JPanel clientPanel = new JPanel();
-	JPanel callsPanel = new JPanel();
+	EmployeePanel employeePanel = new EmployeePanel(); //done
+	
+	JPanel clientPanel = new JPanel(); //todo
+	
+	JPanel callsPanel = new JPanel(); //todo
 	
 	JTabbedPane tab = new JTabbedPane();
 	
 	public MainFrame()
 	{
 		this.setSize(450,650);
+		this.setTitle("Call Center");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		tab.add(employeePanel, "Employees");

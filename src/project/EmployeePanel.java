@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,19 +34,19 @@ public class EmployeePanel extends JPanel{
 	JPanel midPanel=new JPanel();
 	JPanel downPanel=new JPanel();
 	
-	JLabel fnameL=new JLabel("Name:");
+	JLabel fnameL=new JLabel("First Name:");
 	JLabel lnameL=new JLabel("Last name:");
-	JLabel sexL=new JLabel("Sex:");
+	JLabel emailL=new JLabel("Email:");
 	JLabel ageL=new JLabel("Age:");
 	JLabel salaryL=new JLabel("Salary:");
 	
 	JTextField fnameTF=new JTextField();
 	JTextField lnameTF=new JTextField();
+	JTextField emailTF=new JTextField();
 	JTextField ageTF=new JTextField();
+	
 	JTextField salaryTF=new JTextField();
 	
-	String[] item= {"Man", "Woman"};
-	JComboBox<String> sexCombo=new JComboBox<String>(item);
 	JComboBox<String> personCombo=new JComboBox<String>();
 	
 	JButton addBt=new JButton("Add");
@@ -68,8 +69,8 @@ public class EmployeePanel extends JPanel{
 		upPanel.add(fnameTF);
 		upPanel.add(lnameL);
 		upPanel.add(lnameTF);
-		upPanel.add(sexL);
-		upPanel.add(sexCombo);
+		upPanel.add(emailL);
+		upPanel.add(emailTF);
 		upPanel.add(ageL);
 		upPanel.add(ageTF);
 		upPanel.add(salaryL);
@@ -96,7 +97,7 @@ public class EmployeePanel extends JPanel{
 		
 		
 		
-		//addBt.addActionListener(new AddAction());
+		addBt.addActionListener(new AddAction());
 		//deleteBt.addActionListener(new DeleteAction());
 		//searchBt.addActionListener(new SearchAction());
 		//refreshBt.addActionListener(new RefreshAction());
@@ -104,11 +105,63 @@ public class EmployeePanel extends JPanel{
 		//table.addMouseListener(new MouseAction());
 				
 		
-		//refreshTable();
+		RefreshTable();
 		//refreshComboPerson();
 		
 		this.setVisible(true);
 		
+	}
+	
+	public void RefreshTable()
+	{
+		String sql = "SELECT * FROM EMPLOYEES";
+		
+		try {
+			
+			conn = DBConnection.getConnection();
+			state = conn.prepareStatement(sql);
+			result = state.executeQuery();
+			
+			table.setModel(new MyTableModel(result));
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	class AddAction implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			conn = DBConnection.getConnection();
+			
+			String sql = "INSERT INTO EMPLOYEES(FNAME,LNAME,EMAIL,AGE,SALARY)"
+					+ "VALUES(?,?,?,?,?)";
+			
+			try {
+				state = conn.prepareStatement(sql);
+				
+				state.setString(1, fnameTF.getText());
+				state.setString(2, lnameTF.getText());
+				state.setString(3, emailTF.getText());
+				state.setInt(4, Integer.parseInt(ageTF.getText()));
+				state.setFloat(5, Float.parseFloat(salaryTF.getText()));
+				
+				state.execute();
+
+				RefreshTable();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+				
+		}
 	}
 	
 }

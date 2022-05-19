@@ -156,6 +156,10 @@ public class EmployeePanel extends JPanel{
 				state.execute();
 
 				RefreshTable();
+				
+				
+				
+				
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();

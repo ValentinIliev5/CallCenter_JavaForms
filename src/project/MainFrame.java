@@ -21,6 +21,7 @@ public class MainFrame extends JFrame{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		tab.add(employeePanel, "Employees");
+		
 		tab.add(clientPanel,"Clients");
 		tab.add(callsPanel, "Calls");
 		

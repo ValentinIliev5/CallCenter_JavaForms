@@ -17,6 +17,7 @@ public class MyTableModel extends AbstractTableModel {
 	private ArrayList<Object> data=new ArrayList<Object>();
 	 
 	 public MyTableModel(ResultSet rs) throws Exception
+	 
 	 {
 		 setRS(rs);
 	 }// end constructor

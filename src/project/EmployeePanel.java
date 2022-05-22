@@ -284,7 +284,8 @@ public class EmployeePanel extends JPanel{
 					break;
 			
 					case "Age" : sql = "SELECT * FROM EMPLOYEES"
-					+ " WHERE AGE > ?";
+					+ " WHERE AGE = ?";
+					
 					break;
 			
 					case "Salary" : sql = "SELECT * FROM EMPLOYEES"

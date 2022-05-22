@@ -101,6 +101,7 @@ public class ClientsPanel extends JPanel{
 		
 		
 		addBt.addActionListener(new AddAction());
+		editBt.addActionListener(new UpdateAction());
 		deleteBt.addActionListener(new DeleteAction());
 		searchBt.addActionListener(new SearchAction());
 		
@@ -113,7 +114,13 @@ public class ClientsPanel extends JPanel{
 		this.setVisible(true);
 		
 	}
-	
+	public void ClearTextFields()
+	{
+		fnameTF.setText("");
+		lnameTF.setText("");
+		emailTF.setText("");
+		phoneNumberTF.setText("");
+	}
 	public void RefreshTable()
 	{
 		String sql = "SELECT * FROM CLIENTS";
@@ -268,6 +275,37 @@ public class ClientsPanel extends JPanel{
 				}
 			}
 		
+	}
+	class UpdateAction implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			conn = DBConnection.getConnection();
+			
+			String sql = "UPDATE CLIENTS "
+					+ "SET FNAME = ? , LNAME = ? , EMAIL = ? ,"
+					+ "PHONE_NUMBER = ? "
+					+ "WHERE ID = ?";
+			
+			
+			try {
+				state = conn.prepareStatement(sql);
+				
+				state.setString(1, fnameTF.getText());
+				state.setString(2, lnameTF.getText());
+				state.setString(3, emailTF.getText());
+				state.setString(4, phoneNumberTF.getText());
+				state.setInt(5, id);
+				
+				state.execute();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			RefreshTable();
+			ClearTextFields();
+		}
 	}
 	class DeleteAction implements ActionListener
 	{

@@ -112,7 +112,7 @@ public class EmployeePanel extends JPanel{
 		addBt.addActionListener(new AddAction());
 		deleteBt.addActionListener(new DeleteAction());
 		searchBt.addActionListener(new SearchAction());
-		//refreshBt.addActionListener(new RefreshAction());
+		editBt.addActionListener(new UpdateAction());
 		
 		table.addMouseListener(new MouseAction());
 				
@@ -231,6 +231,41 @@ public class EmployeePanel extends JPanel{
 			}
 				
 		}
+	}
+	class UpdateAction implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			conn = DBConnection.getConnection();
+			
+			String sql = "UPDATE EMPLOYEES "
+					+ "SET FNAME = ? , LNAME = ? , EMAIL = ? ,"
+					+ "AGE = ? , SALARY = ? ,"
+					+ "PHONE_NUMBER = ? "
+					+ "WHERE ID = ?";
+			
+			
+			try {
+				state = conn.prepareStatement(sql);
+				
+				state.setString(1, fnameTF.getText());
+				state.setString(2, lnameTF.getText());
+				state.setString(3, emailTF.getText());
+				state.setInt(4, Integer.parseInt(ageTF.getText()));
+				state.setFloat(5,Float.parseFloat(salaryTF.getText()));
+				state.setString(6, phoneNumberTF.getText());
+				state.setInt(7, id);
+				
+				state.execute();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			RefreshTable();
+			ClearTextFields();
+		}
+		
 	}
 	class DeleteAction implements ActionListener
 	{

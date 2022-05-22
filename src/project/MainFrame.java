@@ -8,7 +8,7 @@ public class MainFrame extends JFrame{
 
 	EmployeePanel employeePanel = new EmployeePanel(); //done
 	
-	JPanel clientPanel = new JPanel(); //todo
+	JPanel clientPanel = new ClientsPanel(); //todo
 	
 	JPanel callsPanel = new JPanel(); //todo
 	

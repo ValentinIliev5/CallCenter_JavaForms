@@ -20,7 +20,7 @@ public class MyTableModel extends AbstractTableModel {
 	 
 	 {
 		 setRS(rs);
-	 }// end constructor
+	 }
 	 
 	 public void setRS(ResultSet rs) throws Exception
 	 {
@@ -36,8 +36,8 @@ public class MyTableModel extends AbstractTableModel {
 			 }			 
 			 data.add(row);
 			 rowCount++;
-		}// while
-	 }// end setRS - filling ArrayList with ResultSet values
+		}
+	 }
 	 
 	 public int getColumnCount(){
 		 return columnCount;
@@ -61,5 +61,5 @@ public class MyTableModel extends AbstractTableModel {
 			 e.printStackTrace();
 			 return null;
 		 }
-	 }// end getColumnName
-} // end class MyModel
+	 }
+}

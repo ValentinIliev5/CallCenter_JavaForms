@@ -23,7 +23,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 
-public class EmployeePanel extends JPanel{
+public class ClientsPanel extends JPanel{
 
 	Connection conn = null;
 	PreparedStatement state=null;
@@ -40,34 +40,33 @@ public class EmployeePanel extends JPanel{
 	JLabel fnameL=new JLabel("First Name:");
 	JLabel lnameL=new JLabel("Last name:");
 	JLabel emailL=new JLabel("Email:");
-	JLabel ageL=new JLabel("Age:");
-	JLabel salaryL=new JLabel("Salary:");
 	JLabel phoneNumberL=new JLabel("Phone Number:");
 	
 	JTextField fnameTF=new JTextField();
 	JTextField lnameTF=new JTextField();
 	JTextField emailTF=new JTextField();
-	JTextField ageTF=new JTextField();
-	JTextField salaryTF=new JTextField();
 	JTextField phoneNumberTF=new JTextField();
-	JTextField searchTF=new JTextField();
+	JTextField searchTF = new JTextField();
 	
-	String[] items = {"First Name","Last Name","Email","Age","Salary","Phone number"};
+	String[] items = {"First Name","Last Name","Email","Phone number"};
 	JComboBox<String> queryCombo=new JComboBox<String>(items);
+	
+	
 	JButton addBt=new JButton("Add");
 	JButton deleteBt=new JButton("Delete");
 	JButton editBt=new JButton("Edit");
 	JButton searchBt=new JButton("Search by ");
+	JButton refreshBt=new JButton("Refresh");
 	
 	JTable table=new JTable();
 	JScrollPane myScroll=new JScrollPane(table);
 	
 	
-	public EmployeePanel() {
+	public ClientsPanel() {
 		this.setLayout(new GridLayout(3,1));
 		
 		//upPanel-----------------------------------------
-		upPanel.setLayout(new GridLayout(6, 2));
+		upPanel.setLayout(new GridLayout(4, 2));
 		
 		upPanel.add(fnameL);
 		upPanel.add(fnameTF);
@@ -75,10 +74,6 @@ public class EmployeePanel extends JPanel{
 		upPanel.add(lnameTF);
 		upPanel.add(emailL);
 		upPanel.add(emailTF);
-		upPanel.add(ageL);
-		upPanel.add(ageTF);
-		upPanel.add(salaryL);
-		upPanel.add(salaryTF);
 		upPanel.add(phoneNumberL);
 		upPanel.add(phoneNumberTF);
 		
@@ -86,19 +81,15 @@ public class EmployeePanel extends JPanel{
 		
 		//midPanel------------------------------------
 		midPanel.setLayout(new GridLayout(2,1));
+		midPanel2.setLayout(new GridLayout(3,1));
 		midPanel1.add(addBt);
 		midPanel1.add(deleteBt);
 		midPanel1.add(editBt);
 		midPanel2.add(searchBt);
 		midPanel2.add(queryCombo);
 		midPanel2.add(searchTF);
-		
-		midPanel2.setLayout(new GridLayout(3,1));
-		
 		midPanel.add(midPanel1);
 		midPanel.add(midPanel2);
-		
-		
 		this.add(midPanel);
 		
 		//downPanel-----------------------------------
@@ -112,12 +103,12 @@ public class EmployeePanel extends JPanel{
 		addBt.addActionListener(new AddAction());
 		deleteBt.addActionListener(new DeleteAction());
 		searchBt.addActionListener(new SearchAction());
-		//refreshBt.addActionListener(new RefreshAction());
 		
 		table.addMouseListener(new MouseAction());
 				
 		
 		RefreshTable();
+		//refreshComboPerson();
 		
 		this.setVisible(true);
 		
@@ -125,7 +116,7 @@ public class EmployeePanel extends JPanel{
 	
 	public void RefreshTable()
 	{
-		String sql = "SELECT * FROM EMPLOYEES";
+		String sql = "SELECT * FROM CLIENTS";
 		
 		try {
 			
@@ -145,15 +136,6 @@ public class EmployeePanel extends JPanel{
 		
 	}
 	
-	public void ClearTextFields()
-	{
-		fnameTF.setText("");
-		lnameTF.setText("");
-		emailTF.setText("");
-		ageTF.setText("");
-		salaryTF.setText("");
-		phoneNumberTF.setText("");
-	}
 	class MouseAction implements MouseListener
 	{
 
@@ -166,10 +148,9 @@ public class EmployeePanel extends JPanel{
 			fnameTF.setText(table.getValueAt(row, 1).toString());
 			lnameTF.setText(table.getValueAt(row, 2).toString());
 			emailTF.setText(table.getValueAt(row, 3).toString());
-			ageTF.setText(table.getValueAt(row, 4).toString());
-			salaryTF.setText(table.getValueAt(row, 5).toString());
-			phoneNumberTF.setText(table.getValueAt(row, 6).toString());
-					
+			phoneNumberTF.setText(table.getValueAt(row, 4).toString());
+			
+			
 		}
 
 		@Override
@@ -199,14 +180,15 @@ public class EmployeePanel extends JPanel{
 	}
 	
 	class AddAction implements ActionListener
+
 	{
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			conn = DBConnection.getConnection();
 			
-			String sql = "INSERT INTO EMPLOYEES(FNAME,LNAME,EMAIL,AGE,SALARY,PHONE_NUMBER)"
-					+ "VALUES(?,?,?,?,?,?)";
+			String sql = "INSERT INTO CLIENTS(FNAME,LNAME,EMAIL,PHONE_NUMBER)"
+					+ "VALUES(?,?,?,?)";
 			
 			try {
 				state = conn.prepareStatement(sql);
@@ -214,13 +196,10 @@ public class EmployeePanel extends JPanel{
 				state.setString(1, fnameTF.getText());
 				state.setString(2, lnameTF.getText());
 				state.setString(3, emailTF.getText());
-				state.setInt(4, Integer.parseInt(ageTF.getText()));
-				state.setFloat(5, Float.parseFloat(salaryTF.getText()));
-				state.setString(6, phoneNumberTF.getText());
+				state.setString(4, phoneNumberTF.getText());
 				state.execute();
 
 				RefreshTable();
-				ClearTextFields();
 				
 				
 				
@@ -232,18 +211,75 @@ public class EmployeePanel extends JPanel{
 				
 		}
 	}
+	class SearchAction implements ActionListener
+	{
+		
+		
+		
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			if(searchTF.getText().isEmpty() || searchTF.getText().isBlank())
+				{
+				RefreshTable();
+				}
+			else 
+				{
+				conn = DBConnection.getConnection();
+				String sql = "";
+				String choice = queryCombo.getSelectedItem().toString();
+			
+				switch(choice)
+				{
+				case "First Name" : sql = "SELECT * FROM CLIENTS"
+					+ " WHERE FNAME LIKE ?";
+				break;
+			
+				case "Last Name" : sql = "SELECT * FROM CLIENTS"
+					+ " WHERE LNAME LIKE ?";
+				break;
+			
+				case "Email" : sql = "SELECT * FROM CLIENTS"
+					+ " WHERE EMAIL LIKE ?";
+				break;
+			
+				case "Phone number" : sql = "SELECT * FROM CLIENTS"
+					+ " WHERE PHONE_NUMBER LIKE ?";
+				break;
+			
+				}
+			
+				try 
+				{
+					state = conn.prepareStatement(sql);
+					state.setString(1, searchTF.getText());
+				
+					result = state.executeQuery();
+					table.setModel(new MyTableModel(result));
+				} catch (SQLException e1) 
+				{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				} catch (Exception e1) 
+				{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				}
+				}
+			}
+		
+	}
 	class DeleteAction implements ActionListener
 	{
 
 		@Override
-		public void actionPerformed(ActionEvent e) 
-		{
+		public void actionPerformed(ActionEvent e) {
 			conn = DBConnection.getConnection();
 			
-			String sql = "DELETE FROM EMPLOYEES WHERE ID = ?";
+			String sql = "DELETE FROM CLIENTS WHERE ID = ?";
 			
 			try {
-				state = conn.prepareStatement(sql);
+				state= conn.prepareStatement(sql);
 				state.setInt(1, id);
 				state.execute();
 			} catch (SQLException e1) {
@@ -251,79 +287,8 @@ public class EmployeePanel extends JPanel{
 				e1.printStackTrace();
 			}
 			RefreshTable();
+			
 		}
 		
 	}
-	class SearchAction implements ActionListener
-	{
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if(searchTF.getText().isEmpty() || searchTF.getText().isBlank())
-			{
-				RefreshTable();
-			}
-			else 
-			{
-				conn = DBConnection.getConnection();
-				String sql = "";
-				String choice = queryCombo.getSelectedItem().toString();
-				switch(choice) 
-				{
-					//"First Name","Last Name","Email","Age","Salary","Phone number"
-					case "First Name" : sql = "SELECT * FROM EMPLOYEES"
-					+ " WHERE FNAME = ?";
-					break;
-			
-					case "Last Name" : sql = "SELECT * FROM EMPLOYEES"
-					+ " WHERE LNAME = ?";
-					break;
-			
-					case "Email" : sql = "SELECT * FROM EMPLOYEES"
-					+ " WHERE EMAIL = ?";
-					break;
-			
-					case "Age" : sql = "SELECT * FROM EMPLOYEES"
-					+ " WHERE AGE > ?";
-					break;
-			
-					case "Salary" : sql = "SELECT * FROM EMPLOYEES"
-					+ " WHERE SALARY >= ?";
-					break;
-			
-					case "Phone number" : sql = "SELECT * FROM EMPLOYEES"
-					+ " WHERE PHONE_NUMBER = ?";
-					break;
-				}
-			
-				try {
-					state = conn.prepareStatement(sql);
-					if(choice.equals("Age"))
-					{
-						state.setInt(1, Integer.parseInt(searchTF.getText()));
-					}
-					if(choice.equals("Salary"))
-					{
-						state.setFloat(1, Float.parseFloat(searchTF.getText()));
-					
-					}
-					if(!choice.equals("Age")&& !choice.equals("Salary"))
-					{
-						state.setString(1, searchTF.getText());
-					}
-					result = state.executeQuery();
-					table.setModel(new MyTableModel(result));
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		}
-			
-		
-	}
-	}
-
+}

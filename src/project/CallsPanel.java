@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -70,7 +71,7 @@ public class CallsPanel extends JPanel{
 	JTable table=new JTable();
 	JScrollPane myScroll=new JScrollPane(table);
 	
-	SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yyyy");
+	SimpleDateFormat formatter = new SimpleDateFormat("yyyy-mm-dd");
 	
 	public CallsPanel()
 	{
@@ -119,7 +120,7 @@ public class CallsPanel extends JPanel{
 		addBt.addActionListener(new AddAction());
 		deleteBt.addActionListener(new DeleteAction());
 		searchBt.addActionListener(new SearchAction());
-		//editBt.addActionListener(new UpdateAction());
+		editBt.addActionListener(new UpdateAction());
 		
 		table.addMouseListener(new MouseAction());
 				
@@ -256,6 +257,8 @@ public class CallsPanel extends JPanel{
 			result = state.executeQuery();
 			
 			table.setModel(new MyTableModel(result));
+			table.getColumnModel().getColumn(4).setHeaderValue("Client");
+			table.getColumnModel().getColumn(5).setHeaderValue("Employee");
 			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -286,6 +289,8 @@ public class CallsPanel extends JPanel{
 				
 				java.util.Date date = formatter.parse(dateTF.getText());
 				java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+				sqlDate.setMonth(Integer.parseInt(dateTF.getText().split("-")[1])-1);
+				
 				state.setDate(1, sqlDate);
 				state.setTime(2, java.sql.Time.valueOf(startTF.getText()));
 				state.setTime(3, java.sql.Time.valueOf(endTF.getText()));
@@ -331,8 +336,8 @@ public class CallsPanel extends JPanel{
 			dateTF.setText(table.getValueAt(row, 1).toString());
 			startTF.setText(table.getValueAt(row, 2).toString());
 			endTF.setText(table.getValueAt(row, 3).toString());
-			employeesCombo.getModel().setSelectedItem(table.getValueAt(row, 4).toString());
-			clientsCombo.getModel().setSelectedItem(table.getValueAt(row, 5).toString());
+			clientsCombo.getModel().setSelectedItem(table.getValueAt(row, 4).toString());
+			employeesCombo.getModel().setSelectedItem(table.getValueAt(row, 5).toString());
 		}
 
 		@Override
@@ -394,6 +399,62 @@ public class CallsPanel extends JPanel{
 		}
 		
 	}
+	
+	class UpdateAction implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			
+			int empID = GetEmployeeID(employeesCombo.getSelectedItem().toString());
+			int cliID =GetClientID(clientsCombo.getSelectedItem().toString());
+			
+			conn = DBConnection.getConnection();
+			
+			String sql = "UPDATE CALLS "
+					+ "SET DATE_OF_CALL = ? , START_TIME = ? , END_TIME = ? "
+					+ "WHERE ID = ?";
+			
+			try {
+				java.sql.Date sqlDate = new java.sql.Date(
+						formatter.parse(dateTF.getText())
+						.getTime());
+				
+				sqlDate.setMonth(Integer.parseInt(dateTF.getText().split("-")[1])-1);
+				
+				state=conn.prepareStatement(sql);
+				
+				state.setDate(1, sqlDate);
+				state.setTime(2, java.sql.Time.valueOf(startTF.getText()));
+				state.setTime(3, java.sql.Time.valueOf(endTF.getText()));
+				state.setInt(4, id);
+				state.execute();
+				
+				sql = "UPDATE CALLS_EMPLOYEES "
+						+ "SET EMPLOYEE_ID= " + empID
+						+ " WHERE CALL_ID =" +id;
+				state = conn.prepareStatement(sql);
+				state.execute();
+				
+				sql = "UPDATE CALLS_CLIENTS "
+						+ "SET CLIENT_ID= " + cliID
+						+ " WHERE CALL_ID =" +id;
+				state = conn.prepareStatement(sql);
+				state.execute();
+				
+			} catch (ParseException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			RefreshTable();
+			ClearTextFields();
+		}
+		
+	}
+	
 	class SearchAction implements ActionListener
 	{
 

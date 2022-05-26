@@ -10,7 +10,9 @@ public class MainFrame extends JFrame{
 	
 	JPanel clientPanel = new ClientsPanel(); //done
 	
-	JPanel callsPanel = new CallsPanel(); //todo
+	JPanel callsPanel = new CallsPanel(); //done
+	
+	JPanel queryPanel = new QueryPanel();
 	
 	JTabbedPane tab = new JTabbedPane();
 	
@@ -24,7 +26,7 @@ public class MainFrame extends JFrame{
 		
 		tab.add(clientPanel,"Clients");
 		tab.add(callsPanel, "Calls");
-		
+		tab.add(queryPanel,"Query");
 		this.add(tab);
 		
 		this.setVisible(true);

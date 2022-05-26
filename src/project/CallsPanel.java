@@ -110,7 +110,7 @@ public class CallsPanel extends JPanel{
 		this.add(midPanel);
 		
 		//downPanel-----------------------------------
-		myScroll.setPreferredSize(new Dimension(350, 150));
+		myScroll.setPreferredSize(new Dimension(400, 150));
 		downPanel.add(myScroll);
 		
 		this.add(downPanel);
@@ -487,7 +487,8 @@ public class CallsPanel extends JPanel{
 						state = conn.prepareStatement(sql);
 						java.util.Date date = formatter.parse(searchTF.getText());
 						java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-						state.setDate(1, sqlDate);
+						sqlDate.setMonth(Integer.parseInt(dateTF.getText().split("-")[1])-1);
+						state.setDate(1, sqlDate); // TODO
 						result = state.executeQuery();
 						table.setModel(new MyTableModel(result));
 					} catch (SQLException e1) {
@@ -597,7 +598,11 @@ public class CallsPanel extends JPanel{
 							e1.printStackTrace();
 						}
 					break;
+					
 				}
+				table.getColumnModel().getColumn(4).setHeaderValue("Client");
+				table.getColumnModel().getColumn(5).setHeaderValue("Employee");
+				
 			}
 			
 		}

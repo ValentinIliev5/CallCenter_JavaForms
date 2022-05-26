@@ -93,7 +93,7 @@ public class ClientsPanel extends JPanel{
 		this.add(midPanel);
 		
 		//downPanel-----------------------------------
-		myScroll.setPreferredSize(new Dimension(350, 150));
+		myScroll.setPreferredSize(new Dimension(400, 150));
 		downPanel.add(myScroll);
 		
 		this.add(downPanel);

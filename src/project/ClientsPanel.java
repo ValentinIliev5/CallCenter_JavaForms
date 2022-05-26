@@ -109,7 +109,6 @@ public class ClientsPanel extends JPanel{
 				
 		
 		RefreshTable();
-		//refreshComboPerson();
 		
 		this.setVisible(true);
 		
